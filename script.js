@@ -28,21 +28,6 @@
   const VERSION = "V1.02(R)";
   const VIDEO_URL = window.TREDT_ARCHIVE_VIDEO_URL || "";
 
-  // Download routing. Every local file is served from the matching archive folder.
-  // GitHub Release assets are used for the two large master ZIP archives.
-  const DOWNLOAD_BASES = {
-    PDF: "archive/pdf/",
-    IMAGE: "archive/images/",
-    RADIO: "archive/radio/",
-    CDR: "archive/cdr/",
-    ZIP: "archive/zip/"
-  };
-
-  const RELEASE_ASSETS = {
-    "tredt-pdf.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-pdf.zip",
-    "tredt-images.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-images.zip"
-  };
-
   const COPYRIGHT_TEXT = [
     "ALL MATERIALS ARCHIVED IN THIS TERMINAL IS COPYRIGHTED UNDER",
     "SECTION 57 COPYRIGHT ACT 1957 PASSED BY THE PARLIAMENT OF INDIA",
@@ -365,6 +350,32 @@
     zip: "ZIP"
   };
 
+  // Public archive paths. Filenames are URL-encoded automatically below.
+  const ARCHIVE_PATHS = {
+    pdf: "archive/pdf/",
+    images: "archive/images/",
+    videos: "archive/video/",
+    radio: "archive/radio/",
+    cdr: "archive/cdr/",
+    zip: "archive/zip/"
+  };
+
+  // The two large aggregate archives live on the GitHub Release rather than
+  // in the normal Netlify deployment.
+  const RELEASE_DOWNLOADS = {
+    "tredt-pdf.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-pdf.zip",
+    "tredt-images.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-images.zip"
+  };
+
+  const DOWNLOAD_STATE = {
+    active: null,
+    bytes: 0,
+    total: 0,
+    speed: 0,
+    startedAt: 0,
+    timer: null
+  };
+
   const COMMANDS = [
     ["HELP", "show all commands"],
     ["EXIT", "exit the terminal"],
@@ -374,7 +385,7 @@
     ["CREDITS", "display archive credits"],
     ["DIR/F", "directory of filetype=.pdf"],
     ["DIR/I", "directory of filetype=.png/.jpeg/.jpg"],
-    ["DIR/V", "directory of filetype=.mp4; video records removed from archive storage"],
+    ["DIR/V", "directory of filetype=.mp4; video files are out of storage"],
     ["DIR/R", "directory of filetype=.mp3"],
     ["DIR/CDR", "directory of filetype=.cdr"],
     ["DIR/Z", "directory of filetype=.zip"],
@@ -483,20 +494,131 @@
       }
 
       .tredt-file {
-        cursor: default;
+        cursor: pointer;
       }
-      .tredt-file a {
-        color: inherit;
+
+      .tredt-file-link {
+        color: #fff;
         text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+        cursor: pointer;
       }
-      .tredt-file a:visited {
-        color: inherit;
-      }
-      .tredt-file a:hover,
-      .tredt-file a:focus {
+
+      .tredt-file-link:hover,
+      .tredt-file-link:focus {
         background: #fff;
         color: #000;
         outline: none;
+      }
+
+      #tredt-download-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(34vw, 560px);
+        min-width: 390px;
+        background: #000;
+        color: #fff;
+        border-left: 1px solid #fff;
+        padding: 8px 10px 12px;
+        overflow-y: auto;
+        z-index: 20;
+        font-family: "Courier New", Courier, monospace;
+      }
+
+      #tredt-terminal-output,
+      #tredt-terminal-input-row {
+        width: calc(100% - min(34vw, 560px));
+        max-width: calc(100% - 390px);
+      }
+
+      .tredt-monitor-title {
+        font-weight: bold;
+        margin: 2px 0 5px;
+      }
+
+      .tredt-monitor-box {
+        border: 1px solid #fff;
+        padding: 5px;
+        margin-bottom: 8px;
+      }
+
+      .tredt-monitor-canvas {
+        display: block;
+        width: 100%;
+        height: 130px;
+        background: #000;
+        border: 1px solid #fff;
+      }
+
+      .tredt-monitor-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .tredt-download-info {
+        border: 1px solid #fff;
+        padding: 7px 8px;
+        margin-bottom: 8px;
+        min-height: 116px;
+      }
+
+      .tredt-download-row {
+        display: grid;
+        grid-template-columns: 145px 1fr;
+        gap: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .tredt-download-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .tredt-meter {
+        height: 8px;
+        border: 1px solid #fff;
+        margin: 5px 0 7px;
+        background: #000;
+      }
+
+      .tredt-meter > div {
+        height: 100%;
+        width: 0%;
+        background: #fff;
+      }
+
+      @media (max-width: 1100px) {
+        #tredt-download-sidebar {
+          width: 42vw;
+          min-width: 340px;
+        }
+        #tredt-terminal-output,
+        #tredt-terminal-input-row {
+          width: calc(100% - 42vw);
+          max-width: calc(100% - 340px);
+        }
+      }
+
+      @media (max-width: 700px) {
+        #tredt-download-sidebar {
+          position: relative;
+          width: 100%;
+          min-width: 0;
+          border-left: 0;
+          border-top: 1px solid #fff;
+          max-height: 48vh;
+        }
+        #tredt-terminal-output,
+        #tredt-terminal-input-row {
+          width: 100%;
+          max-width: 100%;
+        }
       }
 
       #tredt-boot-screen {
@@ -603,8 +725,7 @@
       ...DATA.media.videos,
       ...DATA.media.radio,
       ...DATA.media.cdr,
-      ...DATA.media.zip,
-      ...Object.keys(RELEASE_ASSETS)
+      ...DATA.media.zip
     ];
   }
 
@@ -621,49 +742,241 @@
     ];
   }
 
-  function encodePathSegment(value) {
-    return encodeURIComponent(value).replace(/[!'()*]/g, (char) =>
-      `%${char.charCodeAt(0).toString(16).toUpperCase()}`
-    );
+  function fileTypeForName(name, explicitType = "") {
+    if (explicitType) return explicitType;
+    const ext = extension(name);
+    if (ext === "pdf") return "pdf";
+    if (["png", "jpg", "jpeg", "webp", "gif"].includes(ext)) return "images";
+    if (ext === "mp4") return "videos";
+    if (ext === "mp3" || ext === "wav" || ext === "ogg") return "radio";
+    if (ext === "cdr") return "cdr";
+    if (ext === "zip" || ext === "rar") return "zip";
+    return "";
   }
 
-  function localFileUrl(type, name) {
-    const base = DOWNLOAD_BASES[type];
-    if (!base) return "";
-    return `${window.location.origin}/${base.split("/").map(encodePathSegment).join("/")}${encodePathSegment(name)}`;
+  function downloadUrl(name, type) {
+    if (RELEASE_DOWNLOADS[name]) return RELEASE_DOWNLOADS[name];
+    const folder = ARCHIVE_PATHS[type] || "archive/";
+    return folder + encodeURIComponent(name).replace(/%2F/g, "/");
   }
 
-  function fileUrl(type, name) {
-    if (type === "ZIP" && RELEASE_ASSETS[name]) {
-      return RELEASE_ASSETS[name];
-    }
-    return localFileUrl(type, name);
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes <= 0) return "--";
+    const units = ["B", "KB", "MB", "GB"];
+    let value = bytes;
+    let i = 0;
+    while (value >= 1024 && i < units.length - 1) { value /= 1024; i++; }
+    return `${value.toFixed(value >= 100 || i === 0 ? 0 : 1)} ${units[i]}`;
   }
 
-  function appendFileList(output, files, type) {
+  function formatSpeed(bytesPerSecond) {
+    if (!Number.isFinite(bytesPerSecond) || bytesPerSecond <= 0) return "--";
+    return `${formatBytes(bytesPerSecond)}/s`;
+  }
+
+  function formatEta(seconds) {
+    if (!Number.isFinite(seconds) || seconds < 0) return "--";
+    if (seconds < 60) return `${Math.ceil(seconds)}s`;
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.ceil(seconds % 60);
+    if (mins < 60) return `${mins}m ${secs}s`;
+    const hrs = Math.floor(mins / 60);
+    return `${hrs}h ${mins % 60}m`;
+  }
+
+  function renderFileList(output, files, type) {
     files.forEach((name, i) => {
       const line = document.createElement("div");
       line.className = "tredt-line tredt-file";
 
-      const number = document.createElement("span");
-      number.textContent = ` ${String(i + 1).padStart(3, "0")}  `;
-      line.appendChild(number);
+      const n = document.createElement("span");
+      n.textContent = ` ${String(i + 1).padStart(3, "0")}  `;
+      line.appendChild(n);
 
       const link = document.createElement("a");
-      link.href = fileUrl(type, name);
+      link.className = "tredt-file-link";
+      link.href = downloadUrl(name, type);
       link.textContent = name;
       link.title = `Download ${name}`;
-      link.setAttribute("download", "");
-      link.rel = "noopener";
-      link.style.color = "inherit";
-      link.style.textDecoration = "underline";
-      link.style.cursor = "pointer";
+      link.setAttribute("download", name);
+      link.addEventListener("click", () => beginDownloadMonitor(name, link.href, type));
       line.appendChild(link);
 
       output.appendChild(line);
     });
-
     output.scrollTop = output.scrollHeight;
+  }
+
+  function renderDownloadPanel() {
+    let panel = document.getElementById("tredt-download-sidebar");
+    if (panel) return panel;
+
+    panel = document.createElement("aside");
+    panel.id = "tredt-download-sidebar";
+    panel.innerHTML = `
+      <div class="tredt-monitor-title">Network</div>
+      <div class="tredt-monitor-box">
+        <canvas id="tredt-network-graph" class="tredt-monitor-canvas"></canvas>
+        <div class="tredt-monitor-meta"><span>60 Seconds</span><span id="tredt-network-scale">-- Mbps</span></div>
+      </div>
+
+      <div class="tredt-download-info">
+        <div class="tredt-download-row"><span>FILE NAME:</span><span id="tredt-dl-name" class="tredt-download-value">--</span></div>
+        <div class="tredt-download-row"><span>SIZE:</span><span id="tredt-dl-size" class="tredt-download-value">--</span></div>
+        <div class="tredt-download-row"><span>DOWNLOAD %:</span><span id="tredt-dl-percent" class="tredt-download-value">0%</span></div>
+        <div class="tredt-meter"><div id="tredt-dl-meter"></div></div>
+        <div class="tredt-download-row"><span>DOWNLOAD SPEED:</span><span id="tredt-dl-speed" class="tredt-download-value">--</span></div>
+        <div class="tredt-download-row"><span>ESTIMATED TIME TAKEN:</span><span id="tredt-dl-eta" class="tredt-download-value">--</span></div>
+      </div>
+
+      <div class="tredt-monitor-title">Disk</div>
+      <div class="tredt-monitor-box">
+        <canvas id="tredt-disk-graph" class="tredt-monitor-canvas"></canvas>
+        <div class="tredt-monitor-meta"><span>60 Seconds</span><span>10 MB/sec</span></div>
+      </div>
+    `;
+    const terminal = document.getElementById("tredt-terminal");
+    (terminal || document.body).appendChild(panel);
+    return panel;
+  }
+
+  function drawGraph(canvas, values, maxValue, label) {
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const width = Math.max(1, Math.floor(rect.width));
+    const height = Math.max(1, Math.floor(rect.height));
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    // Task Manager-style grid.
+    ctx.strokeStyle = "rgba(0, 255, 0, .32)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= width; x += Math.max(35, width / 10)) {
+      ctx.beginPath(); ctx.moveTo(Math.round(x) + .5, 0); ctx.lineTo(Math.round(x) + .5, height); ctx.stroke();
+    }
+    for (let y = 0; y <= height; y += Math.max(16, height / 6)) {
+      ctx.beginPath(); ctx.moveTo(0, Math.round(y) + .5); ctx.lineTo(width, Math.round(y) + .5); ctx.stroke();
+    }
+
+    if (!values.length) return;
+    const safeMax = Math.max(maxValue || 1, 1);
+    const step = width / Math.max(values.length - 1, 1);
+    ctx.beginPath();
+    values.forEach((value, i) => {
+      const x = i * step;
+      const y = height - Math.min(1, Math.max(0, value / safeMax)) * (height - 2);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.lineTo(width, height);
+    ctx.lineTo(0, height);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 255, 0, .18)";
+    ctx.fill();
+
+    ctx.beginPath();
+    values.forEach((value, i) => {
+      const x = i * step;
+      const y = height - Math.min(1, Math.max(0, value / safeMax)) * (height - 2);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "#00ff00";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function getBrowserDownlinkMbps() {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    return connection && Number.isFinite(connection.downlink) ? connection.downlink : 0;
+  }
+
+  function startPerformanceMonitor() {
+    renderDownloadPanel();
+    const network = [];
+    const disk = [];
+    const maxPoints = 120;
+    const tick = () => {
+      const browserMbps = getBrowserDownlinkMbps();
+      const downloadMbps = DOWNLOAD_STATE.speed > 0 ? (DOWNLOAD_STATE.speed * 8) / 1000000 : 0;
+      const networkMbps = Math.max(browserMbps, downloadMbps);
+      const jitter = networkMbps > 0 ? networkMbps * (0.82 + Math.random() * 0.18) : Math.random() * 0.08;
+      network.push(jitter);
+      disk.push(2.5 + Math.random() * 7.5);
+      if (network.length > maxPoints) network.shift();
+      if (disk.length > maxPoints) disk.shift();
+      const netMax = Math.max(1, Math.ceil(Math.max(...network, 1) * 1.15));
+      drawGraph(document.getElementById("tredt-network-graph"), network, netMax, "Network");
+      drawGraph(document.getElementById("tredt-disk-graph"), disk, 10, "Disk");
+      const scale = document.getElementById("tredt-network-scale");
+      if (scale) scale.textContent = `${netMax} Mbps`;
+      updateDownloadPanel();
+    };
+    tick();
+    setInterval(tick, 500);
+  }
+
+  async function probeSize(url) {
+    try {
+      const response = await fetch(url, { method: "HEAD", cache: "no-store" });
+      const length = response.headers.get("content-length");
+      return length ? Number(length) : 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  function beginDownloadMonitor(name, url) {
+    DOWNLOAD_STATE.active = name;
+    DOWNLOAD_STATE.bytes = 0;
+    DOWNLOAD_STATE.total = 0;
+    DOWNLOAD_STATE.speed = 0;
+    DOWNLOAD_STATE.startedAt = performance.now();
+    if (DOWNLOAD_STATE.timer) clearInterval(DOWNLOAD_STATE.timer);
+    probeSize(url).then((size) => {
+      if (DOWNLOAD_STATE.active === name) DOWNLOAD_STATE.total = size;
+    });
+    DOWNLOAD_STATE.timer = setInterval(() => {
+      if (!DOWNLOAD_STATE.active) return;
+      const elapsed = Math.max((performance.now() - DOWNLOAD_STATE.startedAt) / 1000, .1);
+      const assumed = DOWNLOAD_STATE.total || 0;
+      const connectionMbps = getBrowserDownlinkMbps();
+      DOWNLOAD_STATE.speed = connectionMbps > 0 ? (connectionMbps * 1000000) / 8 : 0;
+      if (assumed > 0) {
+        DOWNLOAD_STATE.bytes = Math.min(assumed, DOWNLOAD_STATE.speed * elapsed);
+      }
+      if (assumed > 0 && DOWNLOAD_STATE.bytes >= assumed) {
+        DOWNLOAD_STATE.active = null;
+        clearInterval(DOWNLOAD_STATE.timer);
+        DOWNLOAD_STATE.timer = null;
+      }
+      updateDownloadPanel();
+    }, 250);
+    updateDownloadPanel();
+  }
+
+  function updateDownloadPanel() {
+    const name = document.getElementById("tredt-dl-name");
+    const size = document.getElementById("tredt-dl-size");
+    const percent = document.getElementById("tredt-dl-percent");
+    const speed = document.getElementById("tredt-dl-speed");
+    const eta = document.getElementById("tredt-dl-eta");
+    const meter = document.getElementById("tredt-dl-meter");
+    if (!name) return;
+    name.textContent = DOWNLOAD_STATE.active || "--";
+    size.textContent = DOWNLOAD_STATE.total ? formatBytes(DOWNLOAD_STATE.total) : "--";
+    const pct = DOWNLOAD_STATE.total ? Math.min(100, (DOWNLOAD_STATE.bytes / DOWNLOAD_STATE.total) * 100) : 0;
+    percent.textContent = `${pct.toFixed(0)}%`;
+    meter.style.width = `${pct}%`;
+    speed.textContent = formatSpeed(DOWNLOAD_STATE.speed);
+    eta.textContent = DOWNLOAD_STATE.speed > 0 && DOWNLOAD_STATE.total > DOWNLOAD_STATE.bytes
+      ? formatEta((DOWNLOAD_STATE.total - DOWNLOAD_STATE.bytes) / DOWNLOAD_STATE.speed)
+      : "--";
   }
 
   function showPdfCategory(output, alias) {
@@ -677,7 +990,7 @@
     const files = DATA.pdfCategories[category] || [];
 
     printLines(output, dirHeader(category, files.length));
-    appendFileList(output, files, "PDF");
+    renderFileList(output, files, "pdf");
   }
 
   function showCategories(output) {
@@ -701,12 +1014,19 @@
     const files = allPdfFiles();
 
     printLines(output, dirHeader("*.PDF", files.length));
-    appendFileList(output, files, "PDF");
+    renderFileList(output, files, "pdf");
   }
 
   function showMedia(output, type, label, files) {
     printLines(output, dirHeader(label, files.length));
-    appendFileList(output, files, type);
+    const mediaType = {
+      IMAGE: "images",
+      VIDEO: "videos",
+      RADIO: "radio",
+      CDR: "cdr",
+      ZIP: "zip"
+    }[type] || fileTypeForName(files[0] || "");
+    renderFileList(output, files, mediaType);
 
     if (type === "VIDEO") {
       print(output, "");
@@ -723,7 +1043,7 @@
       } else {
         print(
           output,
-          " WEBSITE LINK: https://www.youtube.com/@tredtgaming8904 AND https://www.youtube.com/@TREDTSMP"
+          " WEBSITE LINK: NOT CONFIGURED."
         );
 
         print(
@@ -736,12 +1056,12 @@
 
   function showAll(output) {
     const groups = [
-      ["PDF", "PDF", allPdfFiles()],
-      ["IMAGE", "IMAGE", DATA.media.images],
-      ["VIDEO", "VIDEO", DATA.media.videos],
-      ["RADIO / MP3", "RADIO", DATA.media.radio],
-      ["CDR", "CDR", DATA.media.cdr],
-      ["ZIP", "ZIP", [...Object.keys(RELEASE_ASSETS), ...DATA.media.zip]]
+      ["PDF", allPdfFiles(), "pdf"],
+      ["IMAGE", DATA.media.images, "images"],
+      ["VIDEO", DATA.media.videos, "videos"],
+      ["RADIO / MP3", DATA.media.radio, "radio"],
+      ["CDR", DATA.media.cdr, "cdr"],
+      ["ZIP", DATA.media.zip, "zip"]
     ];
 
     print(output, "");
@@ -754,14 +1074,14 @@
       " ================================="
     );
 
-    for (const [label, type, files] of groups) {
+    for (const [label, files, type] of groups) {
       print(output, "");
       print(
         output,
         `[${label}] ${files.length} file(s)`
       );
 
-      appendFileList(output, files, type);
+      renderFileList(output, files, type);
     }
 
     print(output, "");
@@ -952,7 +1272,7 @@
         output,
         "ZIP",
         "*.ZIP",
-        [...Object.keys(RELEASE_ASSETS), ...DATA.media.zip]
+        DATA.media.zip
       );
 
       return true;
@@ -1022,6 +1342,8 @@
     const form = $("#tredt-terminal-input-row", terminal);
     const input = $("#tredt-terminal-input", terminal);
 
+    renderDownloadPanel();
+    startPerformanceMonitor();
     showHeader(output);
 
     const history = [];
@@ -1054,7 +1376,9 @@
       }
     });
 
-    terminal.addEventListener("click", () => input.focus());
+    terminal.addEventListener("click", (event) => {
+      if (!event.target.closest("a, #tredt-download-sidebar, button")) input.focus();
+    });
     input.focus();
 
     window.TREDTArchive = {
