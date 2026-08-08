@@ -28,6 +28,21 @@
   const VERSION = "V1.02(R)";
   const VIDEO_URL = window.TREDT_ARCHIVE_VIDEO_URL || "";
 
+  // Download routing. Every local file is served from the matching archive folder.
+  // GitHub Release assets are used for the two large master ZIP archives.
+  const DOWNLOAD_BASES = {
+    PDF: "archive/pdf/",
+    IMAGE: "archive/images/",
+    RADIO: "archive/radio/",
+    CDR: "archive/cdr/",
+    ZIP: "archive/zip/"
+  };
+
+  const RELEASE_ASSETS = {
+    "tredt-pdf.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-pdf.zip",
+    "tredt-images.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-images.zip"
+  };
+
   const COPYRIGHT_TEXT = [
     "ALL MATERIALS ARCHIVED IN THIS TERMINAL IS COPYRIGHTED UNDER",
     "SECTION 57 COPYRIGHT ACT 1957 PASSED BY THE PARLIAMENT OF INDIA",
@@ -102,7 +117,7 @@
       "Dissolution of TREDT Union Executive Order Ethan Administration 2023.pdf",
       "Division of the TREDT Legislative House Imperial Order 4.pdf",
       "Executive ORDER OF company.pdf",
-      "Executive Order of Union #002.pdf",
+      "Executive_Order_of_Union_002.pdf",
       "ORDER OF REISSUANCE OF ROYAL CHARTER AND ABOLISHMENT OF BOARD OF DIRECTORS.pdf",
       "Order of Succession of Power of the Head of State and Government of the TREDT Union.pdf",
       "Order of Succession of Power of the Head of State and Government of the TREDT Union_signed.pdf",
@@ -222,11 +237,11 @@
     ],
     "Company Registrations": [
       "COMPANY LICENSE TREDT INDUSTRIES.pdf",
-      "Company Name Registration Form #1 URSC.pdf",
-      "Company Registration Form #3 ICCO.pdf",
-      "Company Registration Form #5 UMSC.pdf",
-      "Company Registration Form #6 Union Technologies Inc.pdf",
-      "Company Registration Form #7 TREDT Industries Inc.pdf",
+      "Company_Name_Registration_Form_1_URSC.pdf",
+      "Company_Registration_Form_3_ICCO.pdf",
+      "Company_Registration_Form_5_UMSC.pdf",
+      "Company_Registration_Form_6_Union_Technologies_Inc.pdf",
+      "Company_Registration_Form_7_TREDT_Industries_Inc.pdf",
       "Name Change Form ICCT.pdf",
       "Trading License ITCO.pdf",
       "Trading License RTCO.pdf",
@@ -248,6 +263,7 @@
       "TREDT UNION TOTAL REVISION 2023.pdf",
       "Vizlandia State Survey of Population.pdf",
       "Vizlandia State Survey of Population Raw Data.pdf",
+            "Vizlandia State Survey of Population Raw Data.pdf",
       "TTCO Trading Concession 1.pdf"
     ],
     "Union and State Records": [
@@ -256,7 +272,7 @@
       "Military Permit.pdf",
       "Names with Rank Titles in TREDT.pdf",
       "Operation Pt. Nemo.pdf",
-      "Tax and Revenue Department of TREDT Union, Tax Coll. #1.pdf",
+      "Tax_and_Revenue_Department_of_TREDT_Union_Tax_Coll_1.pdf",
       "Tax Return Form .pdf",
       "The Royal Ender Dragon Team's Union Of State Manifesto.pdf",
       "TREDT TImes 1 2024.pdf",
@@ -336,24 +352,7 @@
       "Apology Statement from TTCO to Vizlandia.mp3",
       "Vizlandia Massacre News Radio.mp3"
     ],
-    "videos": [
-      "COMMUNITY BLAZE ROD FARM (TTCO).mp4",
-      "EXECUTION ISLAND.mp4",
-      "FACT 2023 - 2025 Farewell.mp4",
-      "Oath Taking Ceremony of CJTU Ishaan Das - Made with Clipchamp.mp4",
-      "OLD TREDT LEGISLATIVE HOUSE.mp4",
-      "Podium Intro for Naved Khan - Made with Clipchamp.mp4",
-      "SUPER SNIPER CANNON 1000+ BLOCK RANGE SHOWCASE.mp4",
-      "TREDT SMP Showcase.mp4",
-      "TREDT UNION FLAG WAVE.mp4",
-      "TTCO CONCESSION 1 FIRST TRADE.mp4",
-      "TTCO FIRST TRADING HALL.mp4",
-      "TTCO FLAG WAVE.mp4",
-      "TTCO HQ.mp4",
-      "TTCO NEW HQ.mp4",
-      "TTCO TRADE WITH NK AND AS SHOWCASE.mp4",
-      "ZANYUNG'S RESIDENCE SHOWCASE.mp4"
-    ]
+    "videos": []
   }
 };
 
@@ -375,7 +374,7 @@
     ["CREDITS", "display archive credits"],
     ["DIR/F", "directory of filetype=.pdf"],
     ["DIR/I", "directory of filetype=.png/.jpeg/.jpg"],
-    ["DIR/V", "directory of filetype=.mp4; video files are out of storage"],
+    ["DIR/V", "directory of filetype=.mp4; video records removed from archive storage"],
     ["DIR/R", "directory of filetype=.mp3"],
     ["DIR/CDR", "directory of filetype=.cdr"],
     ["DIR/Z", "directory of filetype=.zip"],
@@ -429,7 +428,11 @@
         box-sizing: border-box;
         z-index: 2147483647;
       }
-      #tredt-terminal * { box-sizing: border-box; }
+
+      #tredt-terminal * {
+        box-sizing: border-box;
+      }
+
       #tredt-terminal-output {
         flex: 1;
         overflow-y: auto;
@@ -437,15 +440,18 @@
         white-space: pre-wrap;
         word-break: break-word;
       }
+
       #tredt-terminal-input-row {
         display: flex;
         flex: 0 0 auto;
         padding: 8px 20px 18px;
       }
+
       #tredt-terminal-prompt {
         white-space: pre;
         flex: 0 0 auto;
       }
+
       #tredt-terminal-input {
         flex: 1;
         min-width: 0;
@@ -458,20 +464,117 @@
         margin: 0;
         caret-color: #fff;
       }
+
       #tredt-terminal-input::selection {
         background: #fff;
         color: #000;
       }
-      .tredt-line { margin: 0; }
-      .tredt-error { color: #fff; }
-      .tredt-dim { opacity: .8; }
-      .tredt-file { cursor: default; }
+
+      .tredt-line {
+        margin: 0;
+      }
+
+      .tredt-error {
+        color: #fff;
+      }
+
+      .tredt-dim {
+        opacity: .8;
+      }
+
+      .tredt-file {
+        cursor: default;
+      }
+      .tredt-file a {
+        color: inherit;
+        text-decoration: underline;
+      }
+      .tredt-file a:visited {
+        color: inherit;
+      }
+      .tredt-file a:hover,
+      .tredt-file a:focus {
+        background: #fff;
+        color: #000;
+        outline: none;
+      }
+
+      #tredt-boot-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483648;
+        background: #000;
+        color: #fff;
+        font-family: "Courier New", Courier, monospace;
+        display: flex;
+        flex-direction: column;
+        padding: 28px;
+        cursor: default;
+        user-select: none;
+      }
+
+      #tredt-boot-output {
+        flex: 1;
+        overflow: hidden;
+        white-space: pre-wrap;
+        line-height: 1.45;
+        text-shadow: 0 0 5px rgba(255,255,255,.18);
+      }
+
+      #tredt-boot-prompt {
+        min-height: 28px;
+        margin-top: 10px;
+      }
+
+      #tredt-boot-skip {
+        position: absolute;
+        right: 24px;
+        bottom: 20px;
+        border: 1px solid #fff;
+        background: #000;
+        color: #fff;
+        font: inherit;
+        padding: 5px 10px;
+        cursor: pointer;
+        opacity: .75;
+      }
+
+      #tredt-boot-skip:hover {
+        opacity: 1;
+        background: #fff;
+        color: #000;
+      }
+
+      .tredt-boot-cursor {
+        display: inline-block;
+        width: 10px;
+        height: 18px;
+        background: #fff;
+        vertical-align: -3px;
+        animation: tredtBootBlink 1s steps(1) infinite;
+      }
+
+      @keyframes tredtBootBlink {
+        50% { opacity: 0; }
+      }
+
       @media (max-width: 700px) {
-        #tredt-terminal { font-size: 13px; }
-        #tredt-terminal-output { padding-left: 10px; padding-right: 10px; }
-        #tredt-terminal-input-row { padding-left: 10px; padding-right: 10px; }
+        #tredt-terminal {
+          font-size: 13px;
+        }
+
+        #tredt-terminal-output {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+
+        #tredt-terminal-input-row {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
       }
     `;
+
     document.head.appendChild(style);
   }
 
@@ -484,7 +587,9 @@
   }
 
   function printLines(output, lines) {
-    for (const line of lines) print(output, line);
+    for (const line of lines) {
+      print(output, line);
+    }
   }
 
   function allPdfFiles() {
@@ -498,7 +603,8 @@
       ...DATA.media.videos,
       ...DATA.media.radio,
       ...DATA.media.cdr,
-      ...DATA.media.zip
+      ...DATA.media.zip,
+      ...Object.keys(RELEASE_ASSETS)
     ];
   }
 
@@ -506,7 +612,6 @@
     const match = name.match(/\.([^.]+)$/);
     return match ? match[1].toLowerCase() : "";
   }
-
   function dirHeader(label, count) {
     return [
       "",
@@ -516,34 +621,76 @@
     ];
   }
 
-  function formatFileList(files) {
-    return files.map((name, i) => {
-      const n = String(i + 1).padStart(3, "0");
-      return ` ${n}  ${name}`;
+  function encodePathSegment(value) {
+    return encodeURIComponent(value).replace(/[!'()*]/g, (char) =>
+      `%${char.charCodeAt(0).toString(16).toUpperCase()}`
+    );
+  }
+
+  function localFileUrl(type, name) {
+    const base = DOWNLOAD_BASES[type];
+    if (!base) return "";
+    return `${window.location.origin}/${base.split("/").map(encodePathSegment).join("/")}${encodePathSegment(name)}`;
+  }
+
+  function fileUrl(type, name) {
+    if (type === "ZIP" && RELEASE_ASSETS[name]) {
+      return RELEASE_ASSETS[name];
+    }
+    return localFileUrl(type, name);
+  }
+
+  function appendFileList(output, files, type) {
+    files.forEach((name, i) => {
+      const line = document.createElement("div");
+      line.className = "tredt-line tredt-file";
+
+      const number = document.createElement("span");
+      number.textContent = ` ${String(i + 1).padStart(3, "0")}  `;
+      line.appendChild(number);
+
+      const link = document.createElement("a");
+      link.href = fileUrl(type, name);
+      link.textContent = name;
+      link.title = `Download ${name}`;
+      link.setAttribute("download", "");
+      link.rel = "noopener";
+      link.style.color = "inherit";
+      link.style.textDecoration = "underline";
+      link.style.cursor = "pointer";
+      line.appendChild(link);
+
+      output.appendChild(line);
     });
+
+    output.scrollTop = output.scrollHeight;
   }
 
   function showPdfCategory(output, alias) {
     const category = CATEGORY_ALIASES[alias];
+
     if (!category) {
       print(output, "Invalid category.");
       return;
     }
 
     const files = DATA.pdfCategories[category] || [];
-    printLines(output, [
-      ...dirHeader(category, files.length),
-      ...formatFileList(files)
-    ]);
+
+    printLines(output, dirHeader(category, files.length));
+    appendFileList(output, files, "PDF");
   }
 
   function showCategories(output) {
     const names = Object.keys(DATA.pdfCategories);
+
     printLines(output, [
       "",
       " TREDT UNION PDF CATEGORIES",
       " ---------------------------",
-      ...names.map((name, i) => ` ${String(i + 1).padStart(2, "0")}. ${name}`),
+      ...names.map(
+        (name, i) =>
+          ` ${String(i + 1).padStart(2, "0")}. ${name}`
+      ),
       "",
       " Use DIR/C/F/<code> to list a category.",
       ""
@@ -552,50 +699,76 @@
 
   function showAllPdf(output) {
     const files = allPdfFiles();
-    printLines(output, [
-      ...dirHeader("*.PDF", files.length),
-      ...formatFileList(files)
-    ]);
+
+    printLines(output, dirHeader("*.PDF", files.length));
+    appendFileList(output, files, "PDF");
   }
 
   function showMedia(output, type, label, files) {
-    printLines(output, [
-      ...dirHeader(label, files.length),
-      ...formatFileList(files)
-    ]);
+    printLines(output, dirHeader(label, files.length));
+    appendFileList(output, files, type);
 
     if (type === "VIDEO") {
       print(output, "");
-      print(output, " VIDEO RECORDS ARE OUT OF STORAGE.");
+      print(
+        output,
+        " VIDEO RECORDS ARE OUT OF STORAGE."
+      );
+
       if (VIDEO_URL) {
-        print(output, ` WEBSITE LINK: ${VIDEO_URL}`);
+        print(
+          output,
+          ` WEBSITE LINK: ${VIDEO_URL}`
+        );
       } else {
-        print(output, " WEBSITE LINK: NOT CONFIGURED.");
-        print(output, " Set window.TREDT_ARCHIVE_VIDEO_URL to enable the link.");
+        print(
+          output,
+          " WEBSITE LINK: NOT CONFIGURED."
+        );
+
+        print(
+          output,
+          " Set window.TREDT_ARCHIVE_VIDEO_URL to enable the link."
+        );
       }
     }
   }
 
   function showAll(output) {
     const groups = [
-      ["PDF", allPdfFiles()],
-      ["IMAGE", DATA.media.images],
-      ["VIDEO", DATA.media.videos],
-      ["RADIO / MP3", DATA.media.radio],
-      ["CDR", DATA.media.cdr],
-      ["ZIP", DATA.media.zip]
+      ["PDF", "PDF", allPdfFiles()],
+      ["IMAGE", "IMAGE", DATA.media.images],
+      ["VIDEO", "VIDEO", DATA.media.videos],
+      ["RADIO / MP3", "RADIO", DATA.media.radio],
+      ["CDR", "CDR", DATA.media.cdr],
+      ["ZIP", "ZIP", [...Object.keys(RELEASE_ASSETS), ...DATA.media.zip]]
     ];
 
     print(output, "");
-    print(output, " TREDT UNION ARCHIVE - ALL FILES");
-    print(output, " =================================");
-    for (const [label, files] of groups) {
+    print(
+      output,
+      " TREDT UNION ARCHIVE - ALL FILES"
+    );
+    print(
+      output,
+      " ================================="
+    );
+
+    for (const [label, type, files] of groups) {
       print(output, "");
-      print(output, `[${label}] ${files.length} file(s)`);
-      printLines(output, formatFileList(files));
+      print(
+        output,
+        `[${label}] ${files.length} file(s)`
+      );
+
+      appendFileList(output, files, type);
     }
+
     print(output, "");
-    print(output, ` TOTAL ARCHIVED FILE RECORDS: ${allFiles().length}`);
+    print(
+      output,
+      ` TOTAL ARCHIVED FILE RECORDS: ${allFiles().length}`
+    );
   }
 
   function showHelp(output) {
@@ -604,7 +777,10 @@
       " TREDT UNION ARCHIVE COMMAND REFERENCE",
       " =====================================",
       "",
-      ...COMMANDS.map(([cmd, desc]) => ` ${cmd.padEnd(16)} - ${desc}`),
+      ...COMMANDS.map(
+        ([cmd, desc]) =>
+          ` ${cmd.padEnd(16)} - ${desc}`
+      ),
       "",
       " Notes:",
       "  DIR/F = PDF records",
@@ -642,16 +818,28 @@
 
   function execute(raw, output, terminal) {
     const command = normalizeCommand(raw);
-    if (!command) return true;
 
-    print(output, `C:\\TREDT> ${raw}`);
+    if (!command) {
+      return true;
+    }
 
-    if (command === "help" || command === "?") {
+    print(
+      output,
+      `C:\\TREDT> ${raw}`
+    );
+
+    if (
+      command === "help" ||
+      command === "?"
+    ) {
       showHelp(output);
       return true;
     }
 
-    if (command === "cls" || command === "clear") {
+    if (
+      command === "cls" ||
+      command === "clear"
+    ) {
       output.innerHTML = "";
       return true;
     }
@@ -664,11 +852,20 @@
         " (C)Copyright 2020 - 2026",
         ""
       ]);
+
       return true;
     }
 
     if (command === "copyright") {
-      printLines(output, ["", ...COPYRIGHT_TEXT, ""]);
+      printLines(
+        output,
+        [
+          "",
+          ...COPYRIGHT_TEXT,
+          ""
+        ]
+      );
+
       return true;
     }
 
@@ -677,18 +874,27 @@
         "",
         " ATTRIBUTIONS AND NAMES OF THE MEMBERS",
         " =====================================",
-        ...CREDITS.map((x, i) => ` ${String(i + 1).padStart(2, "0")}. ${x}`),
+        ...CREDITS.map(
+          (x, i) =>
+            ` ${String(i + 1).padStart(2, "0")}. ${x}`
+        ),
         ""
       ]);
+
       return true;
     }
 
     if (command === "exit") {
       print(output, "");
-      print(output, " Exiting TREDT UNION ARCHIVE...");
+      print(
+        output,
+        " Exiting TREDT UNION ARCHIVE..."
+      );
+
       setTimeout(() => {
         terminal.style.display = "none";
       }, 250);
+
       return false;
     }
 
@@ -698,27 +904,57 @@
     }
 
     if (command === "dir/i") {
-      showMedia(output, "IMAGE", "*.PNG / *.JPEG / *.JPG", DATA.media.images);
+      showMedia(
+        output,
+        "IMAGE",
+        "*.PNG / *.JPEG / *.JPG",
+        DATA.media.images
+      );
+
       return true;
     }
 
     if (command === "dir/v") {
-      showMedia(output, "VIDEO", "*.MP4", DATA.media.videos);
+      showMedia(
+        output,
+        "VIDEO",
+        "*.MP4",
+        DATA.media.videos
+      );
+
       return true;
     }
 
     if (command === "dir/r") {
-      showMedia(output, "RADIO", "*.MP3", DATA.media.radio);
+      showMedia(
+        output,
+        "RADIO",
+        "*.MP3",
+        DATA.media.radio
+      );
+
       return true;
     }
 
     if (command === "dir/cdr") {
-      showMedia(output, "CDR", "*.CDR", DATA.media.cdr);
+      showMedia(
+        output,
+        "CDR",
+        "*.CDR",
+        DATA.media.cdr
+      );
+
       return true;
     }
 
     if (command === "dir/z") {
-      showMedia(output, "ZIP", "*.ZIP", DATA.media.zip);
+      showMedia(
+        output,
+        "ZIP",
+        "*.ZIP",
+        [...Object.keys(RELEASE_ASSETS), ...DATA.media.zip]
+      );
+
       return true;
     }
 
@@ -732,9 +968,15 @@
       return true;
     }
 
-    const categoryMatch = command.match(/^dir\/c\/f\/([a-z]+)$/);
+    const categoryMatch =
+      command.match(/^dir\/c\/f\/([a-z]+)$/);
+
     if (categoryMatch) {
-      showPdfCategory(output, categoryMatch[1]);
+      showPdfCategory(
+        output,
+        categoryMatch[1]
+      );
+
       return true;
     }
 
@@ -749,17 +991,30 @@
     return true;
   }
 
-  function boot() {
-    injectStyles();
-
+  function startTerminal() {
     const terminal = ensureTerminal();
+
     terminal.innerHTML = `
-      <div id="tredt-terminal-output" aria-live="polite"></div>
-      <form id="tredt-terminal-input-row" autocomplete="off">
-        <span id="tredt-terminal-prompt">C:\\TREDT&gt; </span>
-        <input id="tredt-terminal-input" type="text"
-               spellcheck="false" autocomplete="off"
-               aria-label="TREDT archive command">
+      <div
+        id="tredt-terminal-output"
+        aria-live="polite"
+      ></div>
+
+      <form
+        id="tredt-terminal-input-row"
+        autocomplete="off"
+      >
+        <span id="tredt-terminal-prompt">
+          C:\\TREDT&gt;
+        </span>
+
+        <input
+          id="tredt-terminal-input"
+          type="text"
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="TREDT archive command"
+        />
       </form>
     `;
 
@@ -775,10 +1030,12 @@
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const raw = input.value;
+
       if (raw.trim()) {
         history.push(raw);
         historyIndex = history.length;
       }
+
       input.value = "";
       execute(raw, output, terminal);
     });
@@ -800,7 +1057,6 @@
     terminal.addEventListener("click", () => input.focus());
     input.focus();
 
-    // Expose a small API for integrations/custom buttons.
     window.TREDTArchive = {
       data: DATA,
       execute: (command) => execute(command, output, terminal),
@@ -812,9 +1068,211 @@
     };
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  function skipBoot() {
+    const boot = document.getElementById("tredt-boot-screen");
+    if (!boot) return;
+    boot.remove();
+    startTerminal();
+  }
+
+  function startBootSequence() {
+    const terminal = ensureTerminal();
+
+    terminal.innerHTML = `
+      <div id="tredt-boot-screen" tabindex="0">
+        <div id="tredt-boot-output"></div>
+        <div id="tredt-boot-prompt"></div>
+        <button id="tredt-boot-skip" type="button">SKIP INTRO</button>
+      </div>
+    `;
+
+    const screen = $("#tredt-boot-screen", terminal);
+    const output = $("#tredt-boot-output", terminal);
+    const prompt = $("#tredt-boot-prompt", terminal);
+    const skip = $("#tredt-boot-skip", terminal);
+
+    let stopped = false;
+    let timer = null;
+    let spinnerTimer = null;
+
+    // The complete startup is deliberately paced to approximately 14 seconds.
+    const INTRO_TOTAL_MS = 14000;
+    const SPINNER_FRAMES = ["\\", "|", "/", "-"];
+    const checks = [
+      "CHECKING ARCHIVE STORAGE",
+      "CHECKING PDF DATABASE",
+      "CHECKING IMAGE DATABASE",
+      "CHECKING VIDEO DATABASE",
+      "CHECKING RADIO DATABASE",
+      "CHECKING CDR DATABASE",
+      "CHECKING ZIP DATABASE",
+      "LOADING COMMAND INTERPRETER"
+    ];
+
+    const bootLines = [
+      "",
+      "TREDT UNION COMPUTER SYSTEM",
+      "==============================================",
+      "",
+      "TREDT UNION ARCHIVE SYSTEM",
+      `BIOS VERSION ${VERSION}`,
+      "",
+      "MEMORY TEST: 640K OK",
+      ""
+    ];
+
+    const finish = () => {
+      if (stopped) return;
+      stopped = true;
+      if (timer) clearTimeout(timer);
+      if (spinnerTimer) clearInterval(spinnerTimer);
+      skipBoot();
+    };
+
+    skip.addEventListener("click", finish);
+
+    screen.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Enter" ||
+        event.key === "Escape" ||
+        event.key === " "
+      ) {
+        event.preventDefault();
+        finish();
+      }
+    });
+
+    screen.addEventListener("click", (event) => {
+      if (event.target !== skip) screen.focus();
+    });
+
+    screen.focus();
+
+    const addLine = (text = "") => {
+      const line = document.createElement("div");
+      line.textContent = text;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+      return line;
+    };
+
+    // Initial BIOS text: ~2 seconds.
+    let index = 0;
+    const typeLine = () => {
+      if (stopped) return;
+
+      if (index >= bootLines.length) {
+        runChecks();
+        return;
+      }
+
+      addLine(bootLines[index]);
+      index++;
+      timer = setTimeout(typeLine, index <= 6 ? 220 : 180);
+    };
+
+    // Each check gets a DOS spinner first, then resolves to a tick.
+    // Eight checks at ~1 second each plus the opening/closing sequence gives
+    // an approximately 14-second complete boot animation.
+    const runChecks = () => {
+      let checkIndex = 0;
+
+      const nextCheck = () => {
+        if (stopped) return;
+
+        if (checkIndex >= checks.length) {
+          finishSequence();
+          return;
+        }
+
+        const label = checks[checkIndex];
+        const line = addLine(`${label} ............ `);
+        let frame = 0;
+        const started = performance.now();
+        const CHECK_MS = 1250;
+
+        spinnerTimer = setInterval(() => {
+          if (stopped) return;
+          line.textContent =
+            `${label} ............ ${SPINNER_FRAMES[frame]}`;
+          frame = (frame + 1) % SPINNER_FRAMES.length;
+
+          if (performance.now() - started >= CHECK_MS) {
+            clearInterval(spinnerTimer);
+            spinnerTimer = null;
+            line.textContent = `${label} ............ ✓`;
+            checkIndex++;
+            setTimeout(nextCheck, 80);
+          }
+        }, 120);
+      };
+
+      nextCheck();
+    };
+
+    const finishSequence = () => {
+      if (stopped) return;
+
+      addLine("");
+      addLine("INITIALIZING TREDT ARCHIVE SYSTEM...");
+
+      const progress = addLine("LOADING ARCHIVE INDEX................. 000%");
+      let percent = 0;
+
+      const progressTimer = setInterval(() => {
+        if (stopped) {
+          clearInterval(progressTimer);
+          return;
+        }
+
+        percent += 20;
+        progress.textContent =
+          `LOADING ARCHIVE INDEX................. ${String(percent).padStart(3, "0")}%`;
+
+        if (percent >= 100) {
+          clearInterval(progressTimer);
+
+          addLine("");
+          addLine("SYSTEM READY. ✓");
+          addLine("");
+          addLine("C:\\TREDT> ARCHIVE.EXE");
+          addLine("");
+          addLine("TREDT UNION ARCHIVE V1.02(R)");
+          addLine("----------------------------------------------");
+          addLine("AUTHORIZED ARCHIVE TERMINAL");
+          addLine("");
+
+          // Keep the completed boot visible briefly before entering DOS.
+          timer = setTimeout(() => {
+            if (!stopped) {
+              stopped = true;
+              skipBoot();
+            }
+          }, 800);
+        }
+      }, 120);
+    };
+
+    typeLine();
+  }
+
+  function boot() {
+    injectStyles();
+    startBootSequence();
+  }
+
+  if (
+    document.readyState === "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      boot,
+      {
+        once: true
+      }
+    );
   } else {
     boot();
   }
+
 })();
