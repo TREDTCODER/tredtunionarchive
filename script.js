@@ -723,7 +723,7 @@
       } else {
         print(
           output,
-          " WEBSITE LINK: NOT CONFIGURED."
+          " WEBSITE LINK: https://www.youtube.com/@tredtgaming8904 AND https://www.youtube.com/@TREDTSMP"
         );
 
         print(
