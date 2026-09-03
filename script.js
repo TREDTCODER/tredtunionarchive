@@ -1,10 +1,7 @@
 /*
- * TREDT UNION ARCHIVE V1.02(R)
+ * TREDT UNION ARCHIVE V1.02(R) - DYNAMIC GITHUB API ENABLED
  * Complete archive-terminal script generated from:
  * "TREDT Union PDF Archive Classification"
- *
- * The source supplied for this archive lists 15 PDF categories.
- * No additional PDF categories have been invented.
  *
  * Usage:
  *   1. Load this script after your page/container exists, OR include it
@@ -12,13 +9,6 @@
  *   2. Optional: set window.TREDT_ARCHIVE_VIDEO_URL before loading this file.
  *   3. Optional: provide an element with id="tredt-terminal"; otherwise one
  *      is created automatically.
- *
- * Commands:
- *   HELP, CLS, EXIT, VER, COPYRIGHT, CREDITS
- *   DIR/F, DIR/I, DIR/V, DIR/R, DIR/CDR, DIR/Z, DIR/A
- *   DIR/C/F
- *   DIR/C/F/ACT, CON, ORD, LET, LAW, CHA, DEC, JUD, BOK,
- *              FCC, REG, GAZ, CAS, USR, OTH
  */
 
 (() => {
@@ -27,6 +17,11 @@
   const ARCHIVE_NAME = "TREDT UNION ARCHIVE V1.02(R)";
   const VERSION = "V1.02(R)";
   const VIDEO_URL = window.TREDT_ARCHIVE_VIDEO_URL || "";
+
+  // GitHub Repository details for dynamic fetching
+  const REPO_OWNER = "TREDTCODER";
+  const REPO_NAME = "tredtunionarchive";
+  const BRANCH = "main"; // Change to 'master' if your main branch is master
 
   const COPYRIGHT_TEXT = [
     "ALL MATERIALS ARCHIVED IN THIS TERMINAL IS COPYRIGHTED UNDER",
@@ -70,276 +65,63 @@
     oth: "Other"
   };
 
-  const DATA = {
-  "pdfCategories": {
-    "Acts": [
-      "Abolition of the Union Governor's Pass of Legislature Act.pdf",
-      "Charter Regulation Act, 2025.pdf",
-      "Company Names and Logo Registration Act. of 2024.pdf",
-      "Copyright Act 2023.pdf",
-      "Election Regulation Amendment Act, 2024.pdf",
-      "Nonproliferation Nuclear Act, 2025.pdf",
-      "Stamp Issue Act. 2023.pdf",
-      "THE GOD'S ENLIGHTENMENT WORD OF PEACE ACT 2023.pdf",
-      "The TREDT Trading Company Total-Stock-Division Redemption Act.pdf",
-      "TREDT LEGISLATIVE HOUSE ACTS OF DECEMBER,ABOLITION OF TREDT NATIONAL CONGRESS ACT 2023.pdf",
-      "TREDT SMP Financial and Marketing System Enhancement Act. 2024 .pdf",
-      "TREDT Trading Company Total Stock Redemption and Dividend Act, 2022.pdf",
-      "TREDT Trading Company Total Stock Redemption Gaming Group Act.pdf",
-      "TREDT Trading Company Total Stock Redemption Gaming Group Act[1]-signed.pdf",
-      "Uniform Tax Code Act, 2025.pdf",
-      "Villagers Rights and Liberty Act. 2024 .pdf",
-      "Bill No. 01.pdf"
-    ],
-    "Constitution Versions": [
-      "Constitution of TREDT UNION Latest Finished(12th(or)6thAmedment(or)RegulatingAct).pdf",
-      "Constitution of TREDT UNION Old Version.pdf",
-      "Constitution of TREDT UNION.pdf",
-      "The Constitution of TREDT (Simplified).pdf"
-    ],
-    "Orders": [
-      "AN ORDER TO ESTABLISH THE UNION COUNCIL OF COMPANIES.pdf",
-      "Dissolution of TREDT Union Executive Order Ethan Administration 2023.pdf",
-      "Division of the TREDT Legislative House Imperial Order 4.pdf",
-      "Executive ORDER OF company.pdf",
-      "Executive_Order_of_Union_002.pdf",
-      "ORDER OF REISSUANCE OF ROYAL CHARTER AND ABOLISHMENT OF BOARD OF DIRECTORS.pdf",
-      "Order of Succession of Power of the Head of State and Government of the TREDT Union.pdf",
-      "Order of Succession of Power of the Head of State and Government of the TREDT Union_signed.pdf",
-      "Presidential Executive Order I (1).pdf",
-      "Presidential Executive Order II.pdf",
-      "Union Imperial Order I.pdf",
-      "Vizlandia Forestry & Mining Order, 2024.pdf",
-      "Vizlandia Governor's Order.pdf"
-    ],
-    "Letters": [
-      "Ishaan Das to OPOTU.pdf",
-      "Letter 056.pdf",
-      "Letter to Appointment of Ishaan Das.pdf",
-      "Letter to Governor General of TTCO.pdf",
-      "Letter to Ishaan Das.pdf",
-      "Letter to President Of Union(2).pdf",
-      "Letter to President Of Union.pdf",
-      "Letter to the Governor General of ITCO.pdf",
-      "Letter to the ICJT.pdf",
-      "Letter to the President of Union.pdf",
-      "Letter to the TTCO.pdf",
-      "Letter to the Union Governor of TREDT Union..pdf",
-      "Skull and Bones Society, Letter of Acceptance 45DSBSGXD.pdf",
-      "UMSC Stock Issuance Letter.pdf",
-      "FULL PARDON FOR ISHAAN DAS.pdf",
-      "Re-Appointment of Soumya D. Das as Governor.pdf",
-      "Removal of Article 10 after invocation and Abolition of Powers of the Office of Union Governor.pdf",
-      "Request to IIL.pdf",
-      "Resignation of Governor of State of Vizlandia.pdf",
-      "Resignation of President of CWP.pdf",
-      "Resignation of the Governor General of TTCO.pdf",
-      "Transfer of Power Joseph admin to Khan admin OPTU 2024.pdf",
-      "Governor General Appointed Ishaan Das.pdf",
-      "Surrender of Self-Governing Rights of TREDT Trading Company to TREDT Union.pdf"
-    ],
-    "Laws": [
-      "Constitutional-Bill-Regulation-of-Nuclear-Weapon-Use.pdf",
-      "Fourth Regulating Act (Amendment Bill), 2025.pdf",
-      "Regulating Act 3rd Amendment Bill, 2025.pdf",
-      "Regulating Act. 1st Amendment Bill.pdf",
-      "Regulating Act. 2024.pdf",
-      "TREDT Union Regulating Act. 2nd Amendment 2025.pdf",
-      "Imperial Court of Justice of TREDT Amend Approval.pdf",
-      "The Imperial Industries Limited Funding Bill (Money Bill)(Black and White).pdf",
-      "The TREDT National Congress.pdf",
-      "TLH SUMMER SESSION OF 2024.pdf",
-      "TREDT Gaming Stamp Issue Act.pdf",
-      "TREDT Union Annual Report of Economy.pdf",
-      "TREDT UNION CODEX.pdf",
-      "TREDT UNION PRESIDENTIAL ELECTIONS 2024 & ANNOUNCEMENT OF 2024 MEMBER OF TLH LIST.pdf",
-      "TREDT Union Presidential Oath.pdf",
-      "TREDT Union Stock Exchange Committee.pdf",
-      "UEC Ballot Paper.pdf"
-    ],
-    "Charters": [
-      "CHARTER OF GOVERNOR BY STATE OF CRABLAND OF TREDT INDUSTRIES.pdf",
-      "CHARTER OF GOVERNOR OF UNION TECHNOLOGIES INC.pdf",
-      "Charter of the Bill of State Rights.pdf",
-      "Charter of Union.pdf",
-      "Royal Charter of Imperial Trading Company.pdf",
-      "Royal Charter of Royal Trading Company Granted by Union Renewed Khan Adm.pdf",
-      "Royal Charter of Royal Trading Company Granted by Union.pdf",
-      "ROYAL CHARTER OF THE ROYAL TRADING COMPANY.pdf",
-      "Royal Charter of TREDT Trading Company Latest.pdf",
-      "Royal Charter of TREDT Trading Company(2).pdf",
-      "Royal Charter of TREDT Trading Company.pdf"
-    ],
-    "Declarations": [
-      "Declaration by the Governor General's Council of Governors & Company Administrators.pdf",
-      "Declaration of Colonial Authority and Entrustment of Powers to TREDT Industries Inc.pdf",
-      "Declaration of Dissolution of the House of TREDT Legislation, ICJT.pdf",
-      "Declaration of Privatization by the Royal Trading Company.pdf",
-      "Declaration of Privatization by the TREDT Trading Company.pdf",
-      "Declaration of Privatization by the Union State Railways Company.pdf",
-      "Declaration of Subsidiary Establishment UTI.pdf",
-      "Declaration of TREDT Union National Recession.pdf",
-      "Declaration of War on Stephenson Kingdom.pdf",
-      "TREDT UNION 2024 PRESIDENTIAL ELECTION DECLARATION.pdf",
-      "TREDT Union Declaration to TTCO.pdf",
-      "TREDT UNION DECLARATION.pdf",
-      "UNION STATE RAILWAYS COMPANY Registration Declaration to Union.pdf"
-    ],
-    "Judicial Orders": [
-      "Apology Statement to the People of Vizlandia.pdf",
-      "Arrest Warrant of Revolutionaries .pdf",
-      "EVIDENCE.pdf",
-      "Official Record of Incumbentation of President Soumya D. Das.pdf",
-      "TREDT UNION NON-JUDICIAL AFFIDAVIT.pdf",
-      "TREDT UNION, ICJT Request.pdf",
-      "Tsarland High Court of Justice TREDT UNION NON-JUDICIAL Ishaan Das to Union.pdf",
-      "WARRANT OF ARREST ASS 19th3rd2025.pdf"
-    ],
-    "Books": [
-      "Are we alone.pdf",
-      "DeadPlants.exe - The Horror of the Unseen Edition I.pdf",
-      "From the Fears to Fathom Full Volume (3) (1).pdf",
-      "My Preparedness for a Heat Wave.pdf",
-      "Plants Vs. Zombies Garden Warfare 2 Exclusive Comic Book.pdf",
-      "Plants Vs. Zombies Reinforcement learning to a tower defense game.pdf",
-      "SpeechSDDas004.pdf",
-      "The Art of Plants Vs. Zombies.pdf",
-      "The Constitution of India.pdf",
-      "The Constitution of Japan.pdf",
-      "The History of Andaman and Nicobar Islands.pdf",
-      "The Holy Bhagavad Gita.pdf",
-      "The Holy Bible.pdf",
-      "The Holy Quran.pdf",
-      "The Israeli - Palestinian Conflict (Gaza War).pdf",
-      "THE VIZLANDIA AWAKENING Edition I and Volume I 21122024.pdf",
-      "the-complete-works-leonardo-da-vinci.pdf",
-      "When Ice Cream Screams! Edition I.pdf"
-    ],
-    "FACT AND CHESS CCL": [
-      "CCL, FACT Last Season Match Rules.pdf",
-      "Chess Tournamet 2, 2023.pdf",
-      "FACT License(Black and White).pdf"
-    ],
-    "Company Registrations": [
-      "COMPANY LICENSE TREDT INDUSTRIES.pdf",
-      "Company_Name_Registration_Form_1_URSC.pdf",
-      "Company_Registration_Form_3_ICCO.pdf",
-      "Company_Registration_Form_5_UMSC.pdf",
-      "Company_Registration_Form_6_Union_Technologies_Inc.pdf",
-      "Company_Registration_Form_7_TREDT_Industries_Inc.pdf",
-      "Name Change Form ICCT.pdf",
-      "Trading License ITCO.pdf",
-      "Trading License RTCO.pdf",
-      "UMSC Registration Approval.pdf"
-    ],
-    "Gazette": [
-      "Gazette of TREDT Union Cover 002.pdf",
-      "Gazette of TREDT Union Cover.pdf",
-      "GTU 001.pdf"
-    ],
-    "Contracts and Survey": [
-      "CONTRACT FOR THE UNION RAILWAYS PROJECT.pdf",
-      "JOINT STOCK AGREEMENT TREDT INDUSTRIES .pdf",
-      "MATERIALS List with TTCO.pdf",
-      "PARTY MEMBERSHIP AGREEMENT.pdf",
-      "RMS-Titanic-Replica-Ownership-Property.pdf",
-      "St. George's School Interclass Union Agreement TREDT Union.pdf",
-      "TREDT UNION TAX AND REVENUE COMMISSION  JTR_52_2025_0442-T.pdf",
-      "TREDT UNION TOTAL REVISION 2023.pdf",
-      "Vizlandia State Survey of Population.pdf",
-      "Vizlandia State Survey of Population Raw Data.pdf",
-            "Vizlandia State Survey of Population Raw Data.pdf",
-      "TTCO Trading Concession 1.pdf"
-    ],
-    "Union and State Records": [
-      "DEPARTMENT OF WAR AND DEFENCE OF TREDT UNION H-B15M2.pdf",
-      "GOVERNMENT OF VIZLANDIA Preface.pdf",
-      "Military Permit.pdf",
-      "Names with Rank Titles in TREDT.pdf",
-      "Operation Pt. Nemo.pdf",
-      "Tax_and_Revenue_Department_of_TREDT_Union_Tax_Coll_1.pdf",
-      "Tax Return Form .pdf",
-      "The Royal Ender Dragon Team's Union Of State Manifesto.pdf",
-      "TREDT TImes 1 2024.pdf",
-      "TREDT Times 4.pdf",
-      "TREDT Times1 2024.pdf",
-      "TREDT Trading Company Details.pdf",
-      "TREDT Union 2023.pdf",
-      "TREDT Union 2024 Presents.pdf",
-      "TREDT Union National Recession.pdf",
-      "UT-2025-006.pdf",
-      "Imperial Bank of TREDT Treasure Tax and Returns.pdf",
-      "OPOTU D&S 001 NOTICE.pdf",
-      "Stocks to Soumya D. Das.pdf",
-      "TTCO Confedential.pdf"
-    ],
-    "Other": [
-      "Induction Coil.pdf"
-    ]
-  },
-  "media": {
-    "zip": [
-      "Defunction of TTCO.zip",
-      "NBT Data and Proof Case No 2024ICCr01.zip"
-    ],
-    "cdr": [
-      "Royal Charter ITCO. Print.CDR",
-      "Royal Charter of ITCO..CDR",
-      "TTCO LOGO (NEW).cdr",
-      "ttco Logo in progress.cdr",
-      "TUSEC.CDR",
-      "UEC Ballot Paper.cdr"
-    ],
-    "images": [
-      "Cheque Ishaan Das.PNG",
-      "Election Poster.PNG",
-      "Evidence4.PNG",
-      "Grand Roost.png",
-      "Graphic1.PNG",
-      "ICCO Logo.PNG",
-      "Imperial Railways Logo.PNG",
-      "Imperila Bank of TREDT LOGO.jpg",
-      "Ind Day Poster.PNG",
-      "napoleon-marek-burbul.jpg",
-      "output-onlinepngtools.png",
-      "Poem of 26th Jan.PNG",
-      "President Badge of TG.jpg",
-      "President Badge of TU.jpg",
-      "Republic Day Union.PNG",
-      "Republic Day.PNG",
-      "Royal Charter of Imperial Trading Company.PNG",
-      "Screenshot 2023-04-30 165242.png",
-      "Screenshot 2023-04-30 165313.png",
-      "Seal of Approval of TTCO.jpg",
-      "Semi Freind's Union.jpg",
-      "Stamp of TG.jpg",
-      "Stamp of TTCO.png",
-      "Stamp of TU.png",
-      "TREDT Football Club Logo.PNG",
-      "TREDT SMP 2D Render Map.png",
-      "TREDT SMP Background.PNG",
-      "TREDT SMP Merch Design.jpg",
-      "TREDT SMP NOTICE1.PNG",
-      "TREDT SMP-logos.jpeg",
-      "TREDT Times LOGO.jpg",
-      "TREDT Times New LOGO.jpg",
-      "TREDT Union COA.PNG",
-      "TREDT Union Fleur de lIs.jpg",
-      "Tsarland Districts Division.PNG",
-      "TTCO Flag.jpg",
-      "TTCO LOGO.jpg",
-      "TTCO LOGO.png",
-      "TU Eid Al Fitr.png",
-      "TUSEC Logo.PNG",
-      "WhatsApp Image 2024-08-10 at 23.14.06_25065eda.jpg"
-    ],
-    "radio": [
-      "Apology Statement from TTCO to Vizlandia.mp3",
-      "Vizlandia Massacre News Radio.mp3"
-    ],
-    "videos": []
+  // Mutable DATA container populated dynamically from GitHub API
+  let DATA = {
+    pdfCategories: {},
+    media: {
+      zip: [],
+      cdr: [],
+      images: [],
+      radio: [],
+      videos: []
+    }
+  };
+
+  async function fetchLiveArchiveData() {
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`
+      );
+      if (!response.ok) return;
+
+      const repoTree = await response.json();
+      if (!repoTree.tree) return;
+
+      const pdfCategories = {};
+      const media = { zip: [], cdr: [], images: [], radio: [], videos: [] };
+
+      repoTree.tree.forEach((item) => {
+        if (item.type !== "blob") return;
+
+        const parts = item.path.split("/");
+        if (parts[0].toLowerCase() === "archive" && parts.length >= 3) {
+          const folderType = parts[1].toLowerCase();
+          const fileName = parts[parts.length - 1];
+
+          if (folderType === "pdf" && parts.length >= 4) {
+            const category = parts[2];
+            if (!pdfCategories[category]) pdfCategories[category] = [];
+            pdfCategories[category].push(fileName);
+          } else if (folderType === "images") {
+            media.images.push(fileName);
+          } else if (folderType === "video" || folderType === "videos") {
+            media.videos.push(fileName);
+          } else if (folderType === "radio") {
+            media.radio.push(fileName);
+          } else if (folderType === "cdr") {
+            media.cdr.push(fileName);
+          } else if (folderType === "zip") {
+            media.zip.push(fileName);
+          }
+        }
+      });
+
+      DATA.pdfCategories = pdfCategories;
+      DATA.media = media;
+    } catch (error) {
+      console.warn("Dynamic dataset sync skipped, using memory cache.", error);
+    }
   }
-};
 
   const FILE_TYPES = {
     pdf: "PDF",
@@ -350,7 +132,6 @@
     zip: "ZIP"
   };
 
-  // Public archive paths. Filenames are URL-encoded automatically below.
   const ARCHIVE_PATHS = {
     pdf: "archive/pdf/",
     images: "archive/images/",
@@ -360,8 +141,6 @@
     zip: "archive/zip/"
   };
 
-  // The two large aggregate archives live on the GitHub Release rather than
-  // in the normal Netlify deployment.
   const RELEASE_DOWNLOADS = {
     "tredt-pdf.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-pdf.zip",
     "tredt-images.zip": "https://github.com/TREDTCODER/tredtunionarchive/releases/latest/download/tredt-images.zip"
@@ -485,18 +264,6 @@
         margin: 0;
       }
 
-      .tredt-error {
-        color: #fff;
-      }
-
-      .tredt-dim {
-        opacity: .8;
-      }
-
-      .tredt-file {
-        cursor: pointer;
-      }
-
       .tredt-file-link {
         color: #fff;
         text-decoration: underline;
@@ -593,34 +360,6 @@
         background: #fff;
       }
 
-      @media (max-width: 1100px) {
-        #tredt-download-sidebar {
-          width: 42vw;
-          min-width: 340px;
-        }
-        #tredt-terminal-output,
-        #tredt-terminal-input-row {
-          width: calc(100% - 42vw);
-          max-width: calc(100% - 340px);
-        }
-      }
-
-      @media (max-width: 700px) {
-        #tredt-download-sidebar {
-          position: relative;
-          width: 100%;
-          min-width: 0;
-          border-left: 0;
-          border-top: 1px solid #fff;
-          max-height: 48vh;
-        }
-        #tredt-terminal-output,
-        #tredt-terminal-input-row {
-          width: 100%;
-          max-width: 100%;
-        }
-      }
-
       #tredt-boot-screen {
         position: fixed;
         inset: 0;
@@ -640,12 +379,6 @@
         overflow: hidden;
         white-space: pre-wrap;
         line-height: 1.45;
-        text-shadow: 0 0 5px rgba(255,255,255,.18);
-      }
-
-      #tredt-boot-prompt {
-        min-height: 28px;
-        margin-top: 10px;
       }
 
       #tredt-boot-skip {
@@ -658,42 +391,11 @@
         font: inherit;
         padding: 5px 10px;
         cursor: pointer;
-        opacity: .75;
       }
 
       #tredt-boot-skip:hover {
-        opacity: 1;
         background: #fff;
         color: #000;
-      }
-
-      .tredt-boot-cursor {
-        display: inline-block;
-        width: 10px;
-        height: 18px;
-        background: #fff;
-        vertical-align: -3px;
-        animation: tredtBootBlink 1s steps(1) infinite;
-      }
-
-      @keyframes tredtBootBlink {
-        50% { opacity: 0; }
-      }
-
-      @media (max-width: 700px) {
-        #tredt-terminal {
-          font-size: 13px;
-        }
-
-        #tredt-terminal-output {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
-
-        #tredt-terminal-input-row {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
       }
     `;
 
@@ -733,13 +435,9 @@
     const match = name.match(/\.([^.]+)$/);
     return match ? match[1].toLowerCase() : "";
   }
+
   function dirHeader(label, count) {
-    return [
-      "",
-      ` Directory of ${label}`,
-      ` ${count} file(s)`,
-      ""
-    ];
+    return ["", ` Directory of ${label}`, ` ${count} file(s)`, ""];
   }
 
   function fileTypeForName(name, explicitType = "") {
@@ -765,7 +463,10 @@
     const units = ["B", "KB", "MB", "GB"];
     let value = bytes;
     let i = 0;
-    while (value >= 1024 && i < units.length - 1) { value /= 1024; i++; }
+    while (value >= 1024 && i < units.length - 1) {
+      value /= 1024;
+      i++;
+    }
     return `${value.toFixed(value >= 100 || i === 0 ? 0 : 1)} ${units[i]}`;
   }
 
@@ -779,9 +480,7 @@
     if (seconds < 60) return `${Math.ceil(seconds)}s`;
     const mins = Math.floor(seconds / 60);
     const secs = Math.ceil(seconds % 60);
-    if (mins < 60) return `${mins}m ${secs}s`;
-    const hrs = Math.floor(mins / 60);
-    return `${hrs}h ${mins % 60}m`;
+    return `${mins}m ${secs}s`;
   }
 
   function renderFileList(output, files, type) {
@@ -799,7 +498,7 @@
       link.textContent = name;
       link.title = `Download ${name}`;
       link.setAttribute("download", name);
-      link.addEventListener("click", () => beginDownloadMonitor(name, link.href, type));
+      link.addEventListener("click", () => beginDownloadMonitor(name, link.href));
       line.appendChild(link);
 
       output.appendChild(line);
@@ -840,7 +539,7 @@
     return panel;
   }
 
-  function drawGraph(canvas, values, maxValue, label) {
+  function drawGraph(canvas, values, maxValue) {
     if (!canvas) return;
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
@@ -855,14 +554,19 @@
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, width, height);
 
-    // Task Manager-style grid.
     ctx.strokeStyle = "rgba(0, 255, 0, .32)";
     ctx.lineWidth = 1;
     for (let x = 0; x <= width; x += Math.max(35, width / 10)) {
-      ctx.beginPath(); ctx.moveTo(Math.round(x) + .5, 0); ctx.lineTo(Math.round(x) + .5, height); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(Math.round(x) + 0.5, 0);
+      ctx.lineTo(Math.round(x) + 0.5, height);
+      ctx.stroke();
     }
     for (let y = 0; y <= height; y += Math.max(16, height / 6)) {
-      ctx.beginPath(); ctx.moveTo(0, Math.round(y) + .5); ctx.lineTo(width, Math.round(y) + .5); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, Math.round(y) + 0.5);
+      ctx.lineTo(width, Math.round(y) + 0.5);
+      ctx.stroke();
     }
 
     if (!values.length) return;
@@ -872,7 +576,8 @@
     values.forEach((value, i) => {
       const x = i * step;
       const y = height - Math.min(1, Math.max(0, value / safeMax)) * (height - 2);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     });
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
@@ -884,7 +589,8 @@
     values.forEach((value, i) => {
       const x = i * step;
       const y = height - Math.min(1, Math.max(0, value / safeMax)) * (height - 2);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     });
     ctx.strokeStyle = "#00ff00";
     ctx.lineWidth = 1.5;
@@ -911,8 +617,8 @@
       if (network.length > maxPoints) network.shift();
       if (disk.length > maxPoints) disk.shift();
       const netMax = Math.max(1, Math.ceil(Math.max(...network, 1) * 1.15));
-      drawGraph(document.getElementById("tredt-network-graph"), network, netMax, "Network");
-      drawGraph(document.getElementById("tredt-disk-graph"), disk, 10, "Disk");
+      drawGraph(document.getElementById("tredt-network-graph"), network, netMax);
+      drawGraph(document.getElementById("tredt-disk-graph"), disk, 10);
       const scale = document.getElementById("tredt-network-scale");
       if (scale) scale.textContent = `${netMax} Mbps`;
       updateDownloadPanel();
@@ -943,7 +649,7 @@
     });
     DOWNLOAD_STATE.timer = setInterval(() => {
       if (!DOWNLOAD_STATE.active) return;
-      const elapsed = Math.max((performance.now() - DOWNLOAD_STATE.startedAt) / 1000, .1);
+      const elapsed = Math.max((performance.now() - DOWNLOAD_STATE.startedAt) / 1000, 0.1);
       const assumed = DOWNLOAD_STATE.total || 0;
       const connectionMbps = getBrowserDownlinkMbps();
       DOWNLOAD_STATE.speed = connectionMbps > 0 ? (connectionMbps * 1000000) / 8 : 0;
@@ -974,36 +680,30 @@
     percent.textContent = `${pct.toFixed(0)}%`;
     meter.style.width = `${pct}%`;
     speed.textContent = formatSpeed(DOWNLOAD_STATE.speed);
-    eta.textContent = DOWNLOAD_STATE.speed > 0 && DOWNLOAD_STATE.total > DOWNLOAD_STATE.bytes
-      ? formatEta((DOWNLOAD_STATE.total - DOWNLOAD_STATE.bytes) / DOWNLOAD_STATE.speed)
-      : "--";
+    eta.textContent =
+      DOWNLOAD_STATE.speed > 0 && DOWNLOAD_STATE.total > DOWNLOAD_STATE.bytes
+        ? formatEta((DOWNLOAD_STATE.total - DOWNLOAD_STATE.bytes) / DOWNLOAD_STATE.speed)
+        : "--";
   }
 
   function showPdfCategory(output, alias) {
     const category = CATEGORY_ALIASES[alias];
-
     if (!category) {
       print(output, "Invalid category.");
       return;
     }
-
     const files = DATA.pdfCategories[category] || [];
-
     printLines(output, dirHeader(category, files.length));
     renderFileList(output, files, "pdf");
   }
 
   function showCategories(output) {
     const names = Object.keys(DATA.pdfCategories);
-
     printLines(output, [
       "",
       " TREDT UNION PDF CATEGORIES",
       " ---------------------------",
-      ...names.map(
-        (name, i) =>
-          ` ${String(i + 1).padStart(2, "0")}. ${name}`
-      ),
+      ...names.map((name, i) => ` ${String(i + 1).padStart(2, "0")}. ${name}`),
       "",
       " Use DIR/C/F/<code> to list a category.",
       ""
@@ -1012,44 +712,30 @@
 
   function showAllPdf(output) {
     const files = allPdfFiles();
-
     printLines(output, dirHeader("*.PDF", files.length));
     renderFileList(output, files, "pdf");
   }
 
   function showMedia(output, type, label, files) {
     printLines(output, dirHeader(label, files.length));
-    const mediaType = {
-      IMAGE: "images",
-      VIDEO: "videos",
-      RADIO: "radio",
-      CDR: "cdr",
-      ZIP: "zip"
-    }[type] || fileTypeForName(files[0] || "");
+    const mediaType =
+      {
+        IMAGE: "images",
+        VIDEO: "videos",
+        RADIO: "radio",
+        CDR: "cdr",
+        ZIP: "zip"
+      }[type] || fileTypeForName(files[0] || "");
     renderFileList(output, files, mediaType);
 
     if (type === "VIDEO") {
       print(output, "");
-      print(
-        output,
-        " VIDEO RECORDS ARE OUT OF STORAGE."
-      );
-
+      print(output, " VIDEO RECORDS ARE OUT OF STORAGE.");
       if (VIDEO_URL) {
-        print(
-          output,
-          ` WEBSITE LINK: ${VIDEO_URL}`
-        );
+        print(output, ` WEBSITE LINK: ${VIDEO_URL}`);
       } else {
-        print(
-          output,
-          " WEBSITE LINK: NOT CONFIGURED."
-        );
-
-        print(
-          output,
-          " Set window.TREDT_ARCHIVE_VIDEO_URL to enable the link."
-        );
+        print(output, " WEBSITE LINK: NOT CONFIGURED.");
+        print(output, " Set window.TREDT_ARCHIVE_VIDEO_URL to enable the link.");
       }
     }
   }
@@ -1065,30 +751,17 @@
     ];
 
     print(output, "");
-    print(
-      output,
-      " TREDT UNION ARCHIVE - ALL FILES"
-    );
-    print(
-      output,
-      " ================================="
-    );
+    print(output, " TREDT UNION ARCHIVE - ALL FILES");
+    print(output, " =================================");
 
     for (const [label, files, type] of groups) {
       print(output, "");
-      print(
-        output,
-        `[${label}] ${files.length} file(s)`
-      );
-
+      print(output, `[${label}] ${files.length} file(s)`);
       renderFileList(output, files, type);
     }
 
     print(output, "");
-    print(
-      output,
-      ` TOTAL ARCHIVED FILE RECORDS: ${allFiles().length}`
-    );
+    print(output, ` TOTAL ARCHIVED FILE RECORDS: ${allFiles().length}`);
   }
 
   function showHelp(output) {
@@ -1097,20 +770,7 @@
       " TREDT UNION ARCHIVE COMMAND REFERENCE",
       " =====================================",
       "",
-      ...COMMANDS.map(
-        ([cmd, desc]) =>
-          ` ${cmd.padEnd(16)} - ${desc}`
-      ),
-      "",
-      " Notes:",
-      "  DIR/F = PDF records",
-      "  DIR/I = image records",
-      "  DIR/V = video records",
-      "  DIR/R = radio/MP3 records",
-      "  DIR/CDR = CorelDRAW CDR records",
-      "  DIR/Z = ZIP records",
-      "  DIR/A = every archived record",
-      "  DIR/C/F/<code> = PDF category listing",
+      ...COMMANDS.map(([cmd, desc]) => ` ${cmd.padEnd(16)} - ${desc}`),
       ""
     ]);
   }
@@ -1128,38 +788,21 @@
   }
 
   function normalizeCommand(raw) {
-    return raw
-      .trim()
-      .replace(/[()]/g, "")
-      .replace(/\\/g, "/")
-      .replace(/\s+/g, "")
-      .toLowerCase();
+    return raw.trim().replace(/[()]/g, "").replace(/\\/g, "/").replace(/\s+/g, "").toLowerCase();
   }
 
   function execute(raw, output, terminal) {
     const command = normalizeCommand(raw);
+    if (!command) return true;
 
-    if (!command) {
-      return true;
-    }
+    print(output, `C:\\TREDT> ${raw}`);
 
-    print(
-      output,
-      `C:\\TREDT> ${raw}`
-    );
-
-    if (
-      command === "help" ||
-      command === "?"
-    ) {
+    if (command === "help" || command === "?") {
       showHelp(output);
       return true;
     }
 
-    if (
-      command === "cls" ||
-      command === "clear"
-    ) {
+    if (command === "cls" || command === "clear") {
       output.innerHTML = "";
       return true;
     }
@@ -1172,20 +815,11 @@
         " (C)Copyright 2020 - 2026",
         ""
       ]);
-
       return true;
     }
 
     if (command === "copyright") {
-      printLines(
-        output,
-        [
-          "",
-          ...COPYRIGHT_TEXT,
-          ""
-        ]
-      );
-
+      printLines(output, ["", ...COPYRIGHT_TEXT, ""]);
       return true;
     }
 
@@ -1194,27 +828,18 @@
         "",
         " ATTRIBUTIONS AND NAMES OF THE MEMBERS",
         " =====================================",
-        ...CREDITS.map(
-          (x, i) =>
-            ` ${String(i + 1).padStart(2, "0")}. ${x}`
-        ),
+        ...CREDITS.map((x, i) => ` ${String(i + 1).padStart(2, "0")}. ${x}`),
         ""
       ]);
-
       return true;
     }
 
     if (command === "exit") {
       print(output, "");
-      print(
-        output,
-        " Exiting TREDT UNION ARCHIVE..."
-      );
-
+      print(output, " Exiting TREDT UNION ARCHIVE...");
       setTimeout(() => {
         terminal.style.display = "none";
       }, 250);
-
       return false;
     }
 
@@ -1224,57 +849,27 @@
     }
 
     if (command === "dir/i") {
-      showMedia(
-        output,
-        "IMAGE",
-        "*.PNG / *.JPEG / *.JPG",
-        DATA.media.images
-      );
-
+      showMedia(output, "IMAGE", "*.PNG / *.JPEG / *.JPG", DATA.media.images);
       return true;
     }
 
     if (command === "dir/v") {
-      showMedia(
-        output,
-        "VIDEO",
-        "*.MP4",
-        DATA.media.videos
-      );
-
+      showMedia(output, "VIDEO", "*.MP4", DATA.media.videos);
       return true;
     }
 
     if (command === "dir/r") {
-      showMedia(
-        output,
-        "RADIO",
-        "*.MP3",
-        DATA.media.radio
-      );
-
+      showMedia(output, "RADIO", "*.MP3", DATA.media.radio);
       return true;
     }
 
     if (command === "dir/cdr") {
-      showMedia(
-        output,
-        "CDR",
-        "*.CDR",
-        DATA.media.cdr
-      );
-
+      showMedia(output, "CDR", "*.CDR", DATA.media.cdr);
       return true;
     }
 
     if (command === "dir/z") {
-      showMedia(
-        output,
-        "ZIP",
-        "*.ZIP",
-        DATA.media.zip
-      );
-
+      showMedia(output, "ZIP", "*.ZIP", DATA.media.zip);
       return true;
     }
 
@@ -1288,15 +883,9 @@
       return true;
     }
 
-    const categoryMatch =
-      command.match(/^dir\/c\/f\/([a-z]+)$/);
-
+    const categoryMatch = command.match(/^dir\/c\/f\/([a-z]+)$/);
     if (categoryMatch) {
-      showPdfCategory(
-        output,
-        categoryMatch[1]
-      );
-
+      showPdfCategory(output, categoryMatch[1]);
       return true;
     }
 
@@ -1315,26 +904,10 @@
     const terminal = ensureTerminal();
 
     terminal.innerHTML = `
-      <div
-        id="tredt-terminal-output"
-        aria-live="polite"
-      ></div>
-
-      <form
-        id="tredt-terminal-input-row"
-        autocomplete="off"
-      >
-        <span id="tredt-terminal-prompt">
-          C:\\TREDT&gt;
-        </span>
-
-        <input
-          id="tredt-terminal-input"
-          type="text"
-          spellcheck="false"
-          autocomplete="off"
-          aria-label="TREDT archive command"
-        />
+      <div id="tredt-terminal-output" aria-live="polite"></div>
+      <form id="tredt-terminal-input-row" autocomplete="off">
+        <span id="tredt-terminal-prompt">C:\\TREDT&gt;</span>
+        <input id="tredt-terminal-input" type="text" spellcheck="false" autocomplete="off" aria-label="TREDT archive command" />
       </form>
     `;
 
@@ -1387,7 +960,9 @@
       showHelp: () => showHelp(output),
       showAll: () => showAll(output),
       showCategories: () => showCategories(output),
-      clear: () => { output.innerHTML = ""; },
+      clear: () => {
+        output.innerHTML = "";
+      },
       version: VERSION
     };
   }
@@ -1412,18 +987,15 @@
 
     const screen = $("#tredt-boot-screen", terminal);
     const output = $("#tredt-boot-output", terminal);
-    const prompt = $("#tredt-boot-prompt", terminal);
     const skip = $("#tredt-boot-skip", terminal);
 
     let stopped = false;
     let timer = null;
     let spinnerTimer = null;
 
-    // The complete startup is deliberately paced to approximately 14 seconds.
-    const INTRO_TOTAL_MS = 14000;
     const SPINNER_FRAMES = ["\\", "|", "/", "-"];
     const checks = [
-      "CHECKING ARCHIVE STORAGE",
+      "FETCHING LIVE ARCHIVE TREE FROM GITHUB",
       "CHECKING PDF DATABASE",
       "CHECKING IMAGE DATABASE",
       "CHECKING VIDEO DATABASE",
@@ -1456,11 +1028,7 @@
     skip.addEventListener("click", finish);
 
     screen.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Enter" ||
-        event.key === "Escape" ||
-        event.key === " "
-      ) {
+      if (event.key === "Enter" || event.key === "Escape" || event.key === " ") {
         event.preventDefault();
         finish();
       }
@@ -1480,7 +1048,6 @@
       return line;
     };
 
-    // Initial BIOS text: ~2 seconds.
     let index = 0;
     const typeLine = () => {
       if (stopped) return;
@@ -1495,9 +1062,6 @@
       timer = setTimeout(typeLine, index <= 6 ? 220 : 180);
     };
 
-    // Each check gets a DOS spinner first, then resolves to a tick.
-    // Eight checks at ~1 second each plus the opening/closing sequence gives
-    // an approximately 14-second complete boot animation.
     const runChecks = () => {
       let checkIndex = 0;
 
@@ -1513,12 +1077,11 @@
         const line = addLine(`${label} ............ `);
         let frame = 0;
         const started = performance.now();
-        const CHECK_MS = 1250;
+        const CHECK_MS = 1000;
 
         spinnerTimer = setInterval(() => {
           if (stopped) return;
-          line.textContent =
-            `${label} ............ ${SPINNER_FRAMES[frame]}`;
+          line.textContent = `${label} ............ ${SPINNER_FRAMES[frame]}`;
           frame = (frame + 1) % SPINNER_FRAMES.length;
 
           if (performance.now() - started >= CHECK_MS) {
@@ -1550,8 +1113,7 @@
         }
 
         percent += 20;
-        progress.textContent =
-          `LOADING ARCHIVE INDEX................. ${String(percent).padStart(3, "0")}%`;
+        progress.textContent = `LOADING ARCHIVE INDEX................. ${String(percent).padStart(3, "0")}%`;
 
         if (percent >= 100) {
           clearInterval(progressTimer);
@@ -1566,7 +1128,6 @@
           addLine("AUTHORIZED ARCHIVE TERMINAL");
           addLine("");
 
-          // Keep the completed boot visible briefly before entering DOS.
           timer = setTimeout(() => {
             if (!stopped) {
               stopped = true;
@@ -1580,23 +1141,15 @@
     typeLine();
   }
 
-  function boot() {
+  async function boot() {
     injectStyles();
+    await fetchLiveArchiveData();
     startBootSequence();
   }
 
-  if (
-    document.readyState === "loading"
-  ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      boot,
-      {
-        once: true
-      }
-    );
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
   } else {
     boot();
   }
-
 })();
