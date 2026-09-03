@@ -281,7 +281,6 @@
     "zip": [
       "Defunction of TTCO.zip",
       "NBT Data and Proof Case No 2024ICCr01.zip"
-      "tusec-main-archive.zip"
     ],
     "cdr": [
       "Royal Charter ITCO. Print.CDR",
